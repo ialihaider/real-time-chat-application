@@ -1,36 +1,202 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Real-Time Chat Application
 
-## Getting Started
+A modern, full-featured real-time chat application built with Next.js, PostgreSQL, GraphQL, and Socket.IO.
 
-First, run the development server:
+## Features
+
+- 🔐 **User Authentication** - Secure login/register with JWT tokens
+- 💬 **Real-Time Messaging** - Instant message delivery with Socket.IO
+- 🏠 **Chat Rooms** - Create and join public/private chat rooms
+- 👥 **User Management** - User profiles, status, and room memberships
+- ✍️ **Typing Indicators** - See when users are typing
+- 📱 **Responsive Design** - Works on desktop and mobile devices
+- 🎨 **Modern UI** - Beautiful interface with Tailwind CSS
+- 🔒 **Private Rooms** - Secure private chat rooms
+- 📊 **GraphQL API** - Efficient data fetching and mutations
+- 🗄️ **PostgreSQL Database** - Reliable data storage with Prisma ORM
+
+## Tech Stack
+
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **Styling**: Tailwind CSS 4
+- **Backend**: Next.js API Routes
+- **Database**: PostgreSQL with Prisma ORM
+- **Real-Time**: Socket.IO
+- **API**: REST API's
+- **Authentication**: JWT tokens with bcrypt
+- **Icons**: Lucide React
+
+## Prerequisites
+
+- Node.js 18+ 
+- PostgreSQL database
+- npm or yarn
+
+## Setup Instructions
+
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+cd real-time-chat-application
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Environment Configuration
+
+Copy the example environment file and configure your database:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` with your database credentials:
+
+```env
+# Database
+DATABASE_URL="postgresql://username:password@localhost:5432/chat_app"
+
+# JWT Secret (generate a secure random string)
+JWT_SECRET="your-super-secret-jwt-key-here"
+
+# Next.js
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="your-nextauth-secret-here"
+
+# Socket.IO
+SOCKET_CORS_ORIGIN="http://localhost:3000"
+```
+
+### 4. Database Setup
+
+Generate Prisma client and push the schema:
+
+```bash
+# Generate Prisma client
+npm run db:generate
+
+# Push schema to database
+npm run db:push
+```
+
+### 5. Start the Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application will be available at `http://localhost:3000`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Database Schema
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The application uses the following main entities:
 
-## Learn More
+- **Users**: User accounts with authentication
+- **Rooms**: Chat rooms (public/private)
+- **RoomMembers**: User memberships in rooms
+- **Messages**: Chat messages with different types
 
-To learn more about Next.js, take a look at the following resources:
+### Socket.IO
+- WebSocket connection for real-time features
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Key Features Explained
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Authentication
+- JWT-based authentication
+- Secure password hashing with bcrypt
+- Automatic token verification
 
-## Deploy on Vercel
+### Real-Time Communication
+- Socket.IO for instant message delivery
+- Typing indicators
+- User join/leave notifications
+- Connection status indicators
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Chat Rooms
+- Public and private rooms
+- Room creation with descriptions
+- Member management
+- Message history
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### User Interface
+- Responsive design
+- Modern chat interface
+- Real-time status updates
+- Beautiful animations
+
+## Development
+
+### Available Scripts
+
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint
+npm run db:generate  # Generate Prisma client
+npm run db:push      # Push schema to database
+npm run db:studio    # Open Prisma Studio
+```
+
+### Project Structure
+
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── api/               # API routes
+│   │   ├── graphql/       # GraphQL endpoint
+│   │   └── socket/        # Socket.IO endpoint
+│   ├── layout.tsx         # Root layout
+│   └── page.tsx           # Main page
+├── components/            # React components
+│   ├── auth/             # Authentication components
+│   └── chat/             # Chat interface components
+├── contexts/             # React contexts
+│   ├── AuthContext.tsx   # Authentication context
+│   └── SocketContext.tsx # Socket.IO context
+├── lib/                  # Utility libraries
+│   └── graphql/          # GraphQL schema and resolvers
+└── types/                # TypeScript type definitions
+```
+
+## Deployment
+
+### Environment Variables
+
+Make sure to set all required environment variables in your production environment:
+
+- `DATABASE_URL` - PostgreSQL connection string
+- `JWT_SECRET` - Secure JWT signing secret
+- `NEXTAUTH_URL` - Your application URL
+- `NEXTAUTH_SECRET` - NextAuth secret
+- `SOCKET_CORS_ORIGIN` - Allowed CORS origins
+
+### Database Migration
+
+For production deployment, use Prisma migrations:
+
+```bash
+npm run db:generate
+npx prisma migrate deploy
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License.
+
+## Support
+
+If you encounter any issues or have questions, please open an issue on GitHub.

@@ -1,0 +1,593 @@
+{
+  "info": {
+    "name": "Real-Time Chat App API",
+    "description": "Complete API collection for the Real-Time Chat Application built with Next.js, PostgreSQL, and Socket.IO",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "roomId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"username\": \"testuser\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            },
+            "description": "Register a new user account"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('authToken', response.token);",
+                  "    pm.collectionVariables.set('userId', response.user.id);",
+                  "    console.log('Token saved:', response.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Login with existing user credentials"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('authToken', response.token);",
+                  "    pm.collectionVariables.set('userId', response.user.id);",
+                  "    console.log('Token saved:', response.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "me"]
+            },
+            "description": "Get current authenticated user information"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rooms",
+      "item": [
+        {
+          "name": "Get All Rooms",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/rooms",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "rooms"]
+            },
+            "description": "Get all rooms accessible to the authenticated user"
+          }
+        },
+        {
+          "name": "Create Room",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Room\",\n  \"description\": \"A test room for API testing\",\n  \"isPrivate\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/rooms",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "rooms"]
+            },
+            "description": "Create a new chat room"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('roomId', response.room.id);",
+                  "    console.log('Room ID saved:', response.room.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Room by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/rooms/{{roomId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "rooms", "{{roomId}}"]
+            },
+            "description": "Get a specific room by ID"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Messages",
+      "item": [
+        {
+          "name": "Get Room Messages",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/rooms/{{roomId}}/messages?limit=50&offset=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "rooms", "{{roomId}}", "messages"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "50"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                }
+              ]
+            },
+            "description": "Get messages for a specific room with pagination"
+          }
+        },
+        {
+          "name": "Send Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Hello, this is a test message!\",\n  \"type\": \"TEXT\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/rooms/{{roomId}}/messages",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "rooms", "{{roomId}}", "messages"]
+            },
+            "description": "Send a message to a specific room"
+          }
+        }
+      ]
+    },
+    {
+      "name": "GraphQL API",
+      "item": [
+        {
+          "name": "GraphQL - Get Current User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query {\\n  me {\\n    id\\n    email\\n    username\\n    avatar\\n    status\\n    createdAt\\n    updatedAt\\n  }\\n}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/graphql",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "graphql"]
+            },
+            "description": "Get current user using GraphQL"
+          }
+        },
+        {
+          "name": "GraphQL - Get All Users",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query {\\n  users {\\n    id\\n    email\\n    username\\n    avatar\\n    status\\n    createdAt\\n    updatedAt\\n    messages {\\n      id\\n      content\\n      type\\n      createdAt\\n    }\\n    roomMemberships {\\n      id\\n      role\\n      joinedAt\\n      room {\\n        id\\n        name\\n        description\\n        isPrivate\\n      }\\n    }\\n  }\\n}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/graphql",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "graphql"]
+            },
+            "description": "Get all users using GraphQL"
+          }
+        },
+        {
+          "name": "GraphQL - Get All Rooms",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query {\\n  rooms {\\n    id\\n    name\\n    description\\n    isPrivate\\n    createdAt\\n    updatedAt\\n    createdByUser {\\n      id\\n      username\\n      email\\n    }\\n    members {\\n      id\\n      role\\n      joinedAt\\n      user {\\n        id\\n        username\\n        email\\n      }\\n    }\\n    messages {\\n      id\\n      content\\n      type\\n      createdAt\\n      user {\\n        id\\n        username\\n      }\\n    }\\n  }\\n}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/graphql",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "graphql"]
+            },
+            "description": "Get all rooms using GraphQL"
+          }
+        },
+        {
+          "name": "GraphQL - Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation RegisterUser($email: String!, $username: String!, $password: String!) {\\n  register(email: $email, username: $username, password: $password) {\\n    token\\n    user {\\n      id\\n      email\\n      username\\n      avatar\\n      status\\n      createdAt\\n      updatedAt\\n    }\\n  }\\n}\",\n  \"variables\": {\n    \"email\": \"graphql@example.com\",\n    \"username\": \"graphqluser\",\n    \"password\": \"password123\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/graphql",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "graphql"]
+            },
+            "description": "Register user using GraphQL mutation"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.data && response.data.register) {",
+                  "        pm.collectionVariables.set('authToken', response.data.register.token);",
+                  "        pm.collectionVariables.set('userId', response.data.register.user.id);",
+                  "        console.log('GraphQL Token saved:', response.data.register.token);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GraphQL - Login User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation LoginUser($email: String!, $password: String!) {\\n  login(email: $email, password: $password) {\\n    token\\n    user {\\n      id\\n      email\\n      username\\n      avatar\\n      status\\n      createdAt\\n      updatedAt\\n    }\\n  }\\n}\",\n  \"variables\": {\n    \"email\": \"test@example.com\",\n    \"password\": \"password123\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/graphql",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "graphql"]
+            },
+            "description": "Login user using GraphQL mutation"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.data && response.data.login) {",
+                  "        pm.collectionVariables.set('authToken', response.data.login.token);",
+                  "        pm.collectionVariables.set('userId', response.data.login.user.id);",
+                  "        console.log('GraphQL Token saved:', response.data.login.token);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GraphQL - Create Room",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation CreateRoom($name: String!, $description: String, $isPrivate: Boolean) {\\n  createRoom(name: $name, description: $description, isPrivate: $isPrivate) {\\n    id\\n    name\\n    description\\n    isPrivate\\n    createdAt\\n    updatedAt\\n    createdByUser {\\n      id\\n      username\\n      email\\n    }\\n    members {\\n      id\\n      role\\n      joinedAt\\n      user {\\n        id\\n        username\\n        email\\n      }\\n    }\\n  }\\n}\",\n  \"variables\": {\n    \"name\": \"GraphQL Test Room\",\n    \"description\": \"A room created via GraphQL\",\n    \"isPrivate\": false\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/graphql",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "graphql"]
+            },
+            "description": "Create room using GraphQL mutation"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.data && response.data.createRoom) {",
+                  "        pm.collectionVariables.set('roomId', response.data.createRoom.id);",
+                  "        console.log('GraphQL Room ID saved:', response.data.createRoom.id);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GraphQL - Send Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation SendMessage($roomId: String!, $content: String!, $type: MessageType) {\\n  sendMessage(roomId: $roomId, content: $content, type: $type) {\\n    id\\n    content\\n    type\\n    createdAt\\n    updatedAt\\n    user {\\n      id\\n      username\\n      email\\n    }\\n    room {\\n      id\\n      name\\n    }\\n  }\\n}\",\n  \"variables\": {\n    \"roomId\": \"{{roomId}}\",\n    \"content\": \"Hello from GraphQL!\",\n    \"type\": \"TEXT\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/graphql",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "graphql"]
+            },
+            "description": "Send message using GraphQL mutation"
+          }
+        },
+        {
+          "name": "GraphQL - Join Room",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation JoinRoom($roomId: String!) {\\n  joinRoom(roomId: $roomId) {\\n    id\\n    role\\n    joinedAt\\n    user {\\n      id\\n      username\\n      email\\n    }\\n    room {\\n      id\\n      name\\n      description\\n      isPrivate\\n    }\\n  }\\n}\",\n  \"variables\": {\n    \"roomId\": \"{{roomId}}\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/graphql",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "graphql"]
+            },
+            "description": "Join a room using GraphQL mutation"
+          }
+        },
+        {
+          "name": "GraphQL - Leave Room",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation LeaveRoom($roomId: String!) {\\n  leaveRoom(roomId: $roomId)\\n}\",\n  \"variables\": {\n    \"roomId\": \"{{roomId}}\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/graphql",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "graphql"]
+            },
+            "description": "Leave a room using GraphQL mutation"
+          }
+        },
+        {
+          "name": "GraphQL - Update Profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation UpdateProfile($username: String, $avatar: String, $status: UserStatus) {\\n  updateProfile(username: $username, avatar: $avatar, status: $status) {\\n    id\\n    email\\n    username\\n    avatar\\n    status\\n    createdAt\\n    updatedAt\\n  }\\n}\",\n  \"variables\": {\n    \"username\": \"updatedusername\",\n    \"avatar\": \"https://example.com/avatar.jpg\",\n    \"status\": \"ONLINE\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/graphql",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "graphql"]
+            },
+            "description": "Update user profile using GraphQL mutation"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Socket.IO",
+      "item": [
+        {
+          "name": "Socket.IO Connection Test",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/socket",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "socket"]
+            },
+            "description": "Test Socket.IO server endpoint (Note: This is for WebSocket connections, not HTTP requests)"
+          }
+        }
+      ]
+    }
+  ]
+} 
